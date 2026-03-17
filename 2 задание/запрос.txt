@@ -1,0 +1,12 @@
+SELECT
+    o.id AS order_id,
+    c.name AS contragent_name,
+    COALESCE(SUM(po.count * (sr.use_count / s.release_count) * p.cost_price), 0) AS total_cost
+FROM "order" o
+JOIN contragent c ON o.contragent = c.id
+LEFT JOIN product_order po ON o.id = po.order
+LEFT JOIN specification s ON po.product = s.product
+LEFT JOIN specification_row sr ON s.product = sr.product
+LEFT JOIN product p ON sr.material_used = p.id
+WHERE o.id = 1
+GROUP BY o.id, c.name;
